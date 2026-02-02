@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SysMaster - Gestión de Créditos</title>
+    <title>Gestión de Créditos</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -17,37 +17,48 @@
     
     <style>
         /* Personalización de scrollbar */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: #475569; }
         body { background-color: #080c14; }
 
-        /* Animaciones Personalizadas */
+        /* --- Animaciones Profesionales (High-End Motion) --- */
+        
+        /* Slide suave con curva personalizada */
         @keyframes slideInRight {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
+        
+        /* Fade Down sutil */
         @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
+            from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 5px rgba(59, 130, 246, 0.2); }
-            50% { box-shadow: 0 0 15px rgba(59, 130, 246, 0.6); }
+
+        /* Fade Up para filas de tabla (Efecto Cascada) */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .animate-slide-in-right { animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .animate-fade-in-down { animation: fadeInDown 0.6s ease-out forwards; }
+        .animate-slide-in-right { animation: slideInRight 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
+        .animate-fade-in-down { animation: fadeInDown 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
+        .animate-fade-in-up { animation: fadeInUp 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards; opacity: 0; } /* Opacity 0 inicial para evitar flash */
         
-        /* Efectos Hover Sutiles */
+        /* Efectos Hover Glassmorphism */
         .hover-glow:hover {
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.15);
-            border-color: rgba(59, 130, 246, 0.4);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.1);
+            border-color: rgba(59, 130, 246, 0.3);
+            background-color: rgba(30, 41, 59, 0.4);
         }
         
-        /* Retrasos para animación en cascada */
+        /* Utilidades de retraso para animaciones secuenciales */
+        .delay-0 { animation-delay: 0ms; }
+        .delay-75 { animation-delay: 75ms; }
         .delay-100 { animation-delay: 100ms; }
+        .delay-150 { animation-delay: 150ms; }
         .delay-200 { animation-delay: 200ms; }
         .delay-300 { animation-delay: 300ms; }
     </style>
@@ -84,12 +95,13 @@
             Calendar: (props) => <Icon {...props}><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></Icon>,
             Save: (props) => <Icon {...props}><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></Icon>,
             Upload: (props) => <Icon {...props}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></Icon>,
+            Download: (props) => <Icon {...props}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></Icon>,
         };
 
         const { 
             Search, Filter, Save, X, Edit3, Briefcase, User, 
             ArrowLeft, XCircle, ChevronRight, Phone, Building2, Trash2, 
-            CheckCircle2, AlertTriangle, FileText, Calendar, Upload 
+            CheckCircle2, AlertTriangle, FileText, Calendar, Upload, Download 
         } = LucideIcons;
 
         // --- Configuración de Opciones ---
@@ -193,7 +205,7 @@
         };
 
         const KpiChip = ({ icon: Icon, label, value, colorClass, borderClass, bgClass, delayClass }) => (
-            <div className={`flex items-center gap-3 px-4 py-1.5 rounded-lg border ${borderClass} ${bgClass} hover:bg-opacity-80 transition-all cursor-default group relative overflow-hidden animate-fade-in-down ${delayClass} hover-glow`}>
+            <div className={`flex items-center gap-3 px-4 py-1.5 rounded-lg border ${borderClass} ${bgClass} hover:bg-opacity-80 transition-all cursor-default group relative overflow-hidden animate-fade-in-down ${delayClass} hover-glow shadow-sm`}>
                 <div className={`p-1.5 rounded-md bg-white/5 ${colorClass}`}>
                 <Icon size={14} />
                 </div>
@@ -354,6 +366,36 @@
                 }
             };
 
+            const handleExport = () => {
+                // Función real de exportación a CSV
+                const headers = ["ID", "Cliente", "Campaña", "Regional", "Oficina", "Operacion", "Oficial", "Fecha", "Estado", "Comentarios"];
+                const csvContent = [
+                    headers.join(","),
+                    ...filteredData.map(row => [
+                        row.id, 
+                        `"${row.nombreCliente}"`, 
+                        row.campana, 
+                        row.regional, 
+                        row.oficina, 
+                        row.nroOperacion, 
+                        row.nombOficial, 
+                        row.fechaUltimoContacto, 
+                        row.estadoActual, 
+                        `"${row.comentarios}"`
+                    ].join(","))
+                ].join("\n");
+
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement("a");
+                const url = URL.createObjectURL(blob);
+                link.setAttribute("href", url);
+                link.setAttribute("download", `reporte_creditos_${new Date().toISOString().slice(0,10)}.csv`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            };
+
             const handleFilterToggle = () => {
                 setShowFilters(prev => !prev);
             };
@@ -383,7 +425,7 @@
                 {/* --- HEADER --- */}
                 <header className="bg-[#0b1120] border-b border-slate-800 z-30 shrink-0 h-14 flex items-center justify-between px-6 shadow-sm">
                     <div className="flex items-center gap-3">
-                        {/* Botón Volver Atrás (Reemplazo del Logo) */}
+                        {/* Botón Volver Atrás */}
                         <button 
                             onClick={() => window.history.back()} 
                             className="group flex items-center gap-2 p-1.5 pr-3 rounded-full hover:bg-slate-800/50 transition-all border border-transparent hover:border-slate-700/50"
@@ -394,22 +436,15 @@
                             </div>
                             <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider group-hover:text-slate-300 transition-colors">Volver</span>
                         </button>
-
-                        <div className="h-6 w-px bg-slate-800 mx-2"></div>
-
-                        <div>
-                            <h1 className="text-sm font-bold text-white tracking-tight leading-none">SYS<span className="text-blue-500">MASTER</span></h1>
-                            <span className="text-[9px] text-slate-500 uppercase tracking-widest font-semibold">Enterprise V3.5</span>
-                        </div>
                     </div>
 
-                    {/* Micro-Dashboard KPI (Con Animación) */}
+                    {/* Micro-Dashboard KPI (Con Animación Suave) */}
                     <div className="hidden md:flex items-center gap-3">
-                        <KpiChip icon={FileText} label="Total" value={stats.total} colorClass="text-slate-200" bgClass="bg-slate-800/50" borderClass="border-slate-700" delayClass="delay-100" />
-                        <KpiChip icon={CheckCircle2} label="Completos" value={stats.completos} colorClass="text-emerald-400" bgClass="bg-emerald-950/20" borderClass="border-emerald-500/30" delayClass="delay-200" />
-                        <KpiChip icon={AlertTriangle} label="Pendientes" value={stats.incompletos} colorClass="text-red-400" bgClass="bg-red-950/20" borderClass="border-red-500/30" delayClass="delay-300" />
+                        <KpiChip icon={FileText} label="Total" value={stats.total} colorClass="text-slate-200" bgClass="bg-slate-800/50" borderClass="border-slate-700" delayClass="delay-0" />
+                        <KpiChip icon={CheckCircle2} label="Completos" value={stats.completos} colorClass="text-emerald-400" bgClass="bg-emerald-950/20" borderClass="border-emerald-500/30" delayClass="delay-75" />
+                        <KpiChip icon={AlertTriangle} label="Pendientes" value={stats.incompletos} colorClass="text-red-400" bgClass="bg-red-950/20" borderClass="border-red-500/30" delayClass="delay-150" />
                         
-                        <div className="flex items-center gap-2 px-3 animate-fade-in-down delay-300">
+                        <div className="flex items-center gap-2 px-3 animate-fade-in-down delay-200">
                             <span className="text-[9px] text-slate-500 font-bold uppercase">Progreso</span>
                             <div className="w-24 h-1.5 bg-slate-800 rounded-full overflow-hidden shadow-inner group relative hover:shadow-[0_0_8px_rgba(59,130,246,0.3)] transition-shadow">
                                 <div className="h-full bg-gradient-to-r from-blue-600 via-blue-400 to-emerald-400 transition-all duration-1000 ease-out" style={{width: `${stats.porcentaje}%`}}></div>
@@ -486,6 +521,14 @@
                                     )}
                                 </button>
 
+                                {/* Botón Exportar (NUEVO) */}
+                                <button 
+                                    onClick={handleExport}
+                                    className="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-wide transition-all flex items-center gap-2 border border-slate-700 hover:border-slate-500 active:scale-95 hover-glow"
+                                >
+                                    <Download size={12} /> <span>Exportar</span>
+                                </button>
+
                                 <button onClick={handleAddNew} className="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-wide shadow-lg shadow-blue-900/20 transition-all flex items-center gap-1.5 hover:shadow-blue-500/40 active:scale-95 hover-glow">
                                     <span>+</span> Nuevo
                                 </button>
@@ -538,11 +581,12 @@
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-800/50 cursor-pointer text-xs">
-                                {filteredData.map((row) => (
+                                {filteredData.map((row, index) => (
                                 <tr 
                                     key={row.id} 
                                     onClick={() => openDrawer(row)}
-                                    className="hover:bg-slate-800/50 transition-all duration-150 group relative hover:shadow-[inset_0_0_20px_rgba(59,130,246,0.05)]"
+                                    className="hover:bg-slate-800/50 transition-all duration-150 group relative hover:shadow-[inset_0_0_20px_rgba(59,130,246,0.05)] animate-fade-in-up"
+                                    style={{ animationDelay: `${index * 50}ms` }}
                                 >
                                     <td className="p-2 text-center sticky left-0 z-10 bg-slate-900 group-hover:bg-slate-800 transition-colors border-r border-slate-800 text-slate-500">
                                     <Edit3 size={12} className="mx-auto opacity-30 group-hover:opacity-100 group-hover:text-blue-400 transition-opacity" />
